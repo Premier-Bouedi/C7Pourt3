@@ -15,7 +15,11 @@ class ProductController extends Controller
             $q->where('category', $cat);
         }
         $sort = $request->string('sort', 'featured')->toString();
+        if ($sort === 'bestseller') {
+            $q->where('is_featured', true);
+        }
         $q = match ($sort) {
+            'bestseller', 'featured' => $q->orderByDesc('created_at'),
             'price_asc' => $q->orderBy('base_price'),
             'price_desc' => $q->orderByDesc('base_price'),
             'newest' => $q->orderByDesc('created_at'),

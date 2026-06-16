@@ -6,7 +6,7 @@ import ShopLayout from '../Layouts/ShopLayout';
 import { useCart } from '../hooks/useCart';
 
 const sortOptions = [
-    { value: 'featured', label: 'En vedette' },
+    { value: 'bestseller', label: 'Plus vendu' },
     { value: 'newest', label: 'Nouveautés' },
     { value: 'price_asc', label: 'Prix croissant' },
     { value: 'price_desc', label: 'Prix décroissant' },

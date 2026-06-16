@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import ShopLayout from '../Layouts/ShopLayout';
 import { useCart } from '../hooks/useCart';
 
@@ -7,7 +7,14 @@ function formatFcfa(n) {
 }
 
 export default function Panier() {
+    const { app } = usePage().props;
     const { items, removeItem, setQuantity, total, itemCount } = useCart();
+    const waCart =
+        items.length > 0
+            ? `https://wa.me/${app?.whatsapp}?text=${encodeURIComponent(
+                  `Bonjour C7Pourt3, j'ai ${itemCount} article(s) dans mon panier (${total.toLocaleString('fr-FR')} FCFA). Aide pour commander.`,
+              )}`
+            : app?.whatsappUrls?.general;
 
     return (
         <ShopLayout>
@@ -92,14 +99,20 @@ export default function Panier() {
                             >
                                 Continuer mes achats
                             </Link>
-                            <button
-                                type="button"
-                                disabled
-                                className="rounded-full bg-stone-900 px-8 py-3 text-xs font-medium uppercase tracking-wider text-white opacity-50"
-                                title="Page commander bientôt disponible"
+                            <Link
+                                href="/commander"
+                                className="rounded-full bg-stone-900 px-8 py-3 text-center text-xs font-medium uppercase tracking-wider text-white"
                             >
                                 Commander
-                            </button>
+                            </Link>
+                            <a
+                                href={waCart}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-full border border-stone-300 px-8 py-3 text-center text-xs font-medium uppercase tracking-wider"
+                            >
+                                WhatsApp
+                            </a>
                         </div>
                     </div>
                 )}

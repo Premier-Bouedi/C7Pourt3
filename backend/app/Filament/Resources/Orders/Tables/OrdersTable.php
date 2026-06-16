@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Filament\Resources\Orders\Concerns\HasOrderQuickActions;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -10,6 +11,7 @@ use Filament\Tables\Table;
 
 class OrdersTable
 {
+    use HasOrderQuickActions;
     public static function configure(Table $table): Table
     {
         return $table
@@ -27,16 +29,21 @@ class OrdersTable
                 TextColumn::make('shipping_city')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->label('Statut')
                     ->badge()
+                    ->formatStateUsing(fn ($state) => $state?->label() ?? $state)
                     ->searchable(),
                 TextColumn::make('subtotal')
-                    ->numeric()
+                    ->label('Sous-total')
+                    ->formatStateUsing(fn ($s) => number_format((int) $s, 0, ',', ' ').' FCFA')
                     ->sortable(),
                 TextColumn::make('shipping_fee')
-                    ->numeric()
+                    ->label('Livraison')
+                    ->formatStateUsing(fn ($s) => number_format((int) $s, 0, ',', ' ').' FCFA')
                     ->sortable(),
                 TextColumn::make('total')
-                    ->numeric()
+                    ->label('Total')
+                    ->formatStateUsing(fn ($s) => number_format((int) $s, 0, ',', ' ').' FCFA')
                     ->sortable(),
                 TextColumn::make('currency')
                     ->searchable(),
@@ -68,6 +75,7 @@ class OrdersTable
                 //
             ])
             ->recordActions([
+                ...self::orderQuickActions(),
                 EditAction::make(),
             ])
             ->toolbarActions([

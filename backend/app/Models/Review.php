@@ -15,11 +15,15 @@ class Review extends Model
         'rating',
         'comment',
         'is_approved',
+        'is_verified_purchase',
     ];
 
     protected function casts(): array
     {
-        return ['is_approved' => 'boolean'];
+        return [
+            'is_approved' => 'boolean',
+            'is_verified_purchase' => 'boolean',
+        ];
     }
 
     public function product(): BelongsTo

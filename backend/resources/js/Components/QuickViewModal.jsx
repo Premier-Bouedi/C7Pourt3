@@ -1,5 +1,7 @@
 import { Dialog, DialogPanel } from '@headlessui/react';
+import { usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
+import ProductReviews from './ProductReviews';
 import StarRating from './StarRating';
 
 function formatFcfa(n) {
@@ -19,7 +21,16 @@ function galleryImages(product, variant) {
     return list.length ? list : variant?.image ? [variant.image] : [];
 }
 
+function buildWhatsAppOrderUrl(phone, productName, price) {
+    const text =
+        `Bonjour C7Pourt3, je souhaite commander le sac ${productName} au prix de ` +
+        `${new Intl.NumberFormat('fr-FR').format(price)} FCFA. ` +
+        `Voici mes informations pour la livraison à Libreville : [Nom/Prénom] - [Quartier] - [Téléphone].`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
 export default function QuickViewModal({ product, open, onClose, onAddToCart }) {
+    const { app } = usePage().props;
     const variants = product?.variants ?? [];
     const [sel, setSel] = useState(null);
     const [qty, setQty] = useState(1);
@@ -193,14 +204,24 @@ export default function QuickViewModal({ product, open, onClose, onAddToCart }) 
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                disabled={!v?.in_stock}
-                                onClick={addToCart}
-                                className="mt-8 w-full bg-stone-900 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-40"
-                            >
-                                Ajouter au panier
-                            </button>
+                            <div className="mt-8 flex flex-col gap-3">
+                                <button
+                                    type="button"
+                                    disabled={!v?.in_stock}
+                                    onClick={addToCart}
+                                    className="w-full bg-stone-900 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    Ajouter au panier
+                                </button>
+                                <a
+                                    href={buildWhatsAppOrderUrl(app?.whatsapp ?? '24100000000', product.name, price)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex w-full items-center justify-center gap-2 border border-[#25D366] py-4 text-sm font-semibold uppercase tracking-[0.15em] text-[#128C7E]"
+                                >
+                                    Commander via WhatsApp
+                                </a>
+                            </div>
 
                             <p className="mt-4 flex items-start gap-2 text-xs text-stone-500">
                                 <span className="text-base" aria-hidden>
@@ -215,6 +236,8 @@ export default function QuickViewModal({ product, open, onClose, onAddToCart }) 
                             {!v?.in_stock && (
                                 <p className="mt-2 text-sm font-medium text-red-600">Rupture de stock</p>
                             )}
+
+                            <ProductReviews productSlug={product.slug} productName={product.name} />
                         </div>
                     </div>
 

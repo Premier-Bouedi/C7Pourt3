@@ -24,8 +24,8 @@ export default function SiteHeader() {
                     </Link>
 
                     <nav className="flex items-center gap-6 sm:gap-8">
-                        <Link href="/collection" className={linkClass}>
-                            Collection
+                        <Link href="/collection?sort=bestseller" className={linkClass}>
+                            Plus vendu
                         </Link>
                         <Link href="/collection?sort=newest" className={linkClass}>
                             Nouveautés
