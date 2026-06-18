@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "backend/public/**", "use": "@vercel/static" },
+    { "src": "backend/**/*.php", "use": "@vercel/php" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "backend/public/$1" }
+  ]
+}

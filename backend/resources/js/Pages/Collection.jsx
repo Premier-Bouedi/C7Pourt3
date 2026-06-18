@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ProductCard from '../Components/ProductCard';
 import QuickViewModal from '../Components/QuickViewModal';
 import ShopLayout from '../Layouts/ShopLayout';
@@ -15,6 +15,9 @@ const sortOptions = [
 export default function Collection({ products, filters, categories }) {
     const [qp, setQp] = useState(null);
     const [open, setOpen] = useState(false);
+    const [catalogProducts, setCatalogProducts] = useState(products.data ?? []);
+    const [catalogError, setCatalogError] = useState('');
+    const [catalogLoading, setCatalogLoading] = useState(true);
     const { addItem } = useCart();
 
     const openQ = useCallback(async (p) => {
@@ -24,6 +27,44 @@ export default function Collection({ products, filters, categories }) {
         }
         setQp((await res.json()).product);
         setOpen(true);
+    }, []);
+
+    useEffect(() => {
+        const abortController = new AbortController();
+        const loadCatalog = async () => {
+            setCatalogLoading(true);
+            setCatalogError('');
+
+            const sources = ['http://127.0.0.1:8000/api/products', '/catalog.json'];
+
+            for (const source of sources) {
+                try {
+                    const response = await fetch(source, { signal: abortController.signal });
+                    if (!response.ok) {
+                        continue;
+                    }
+
+                    const json = await response.json();
+                    const received = Array.isArray(json.products) ? json.products : json;
+
+                    if (Array.isArray(received) && received.length > 0) {
+                        setCatalogProducts(received);
+                        setCatalogLoading(false);
+                        return;
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        return;
+                    }
+                }
+            }
+
+            setCatalogError('Impossible de charger le catalogue. Vérifiez l’API ou catalog.json.');
+            setCatalogLoading(false);
+        };
+
+        loadCatalog();
+        return () => abortController.abort();
     }, []);
 
     const applySort = (sort) => {
@@ -81,12 +122,16 @@ export default function Collection({ products, filters, categories }) {
                 </div>
 
                 <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-                    {products.data.map((p) => (
+                    {(catalogProducts.length > 0 ? catalogProducts : products.data).map((p) => (
                         <ProductCard key={p.id} product={p} onQuickView={openQ} />
                     ))}
                 </div>
 
-                {products.data.length === 0 && (
+                {catalogError && (
+                    <p className="mt-6 text-center text-sm text-rose-600">{catalogError}</p>
+                )}
+
+                {!catalogLoading && (catalogProducts.length === 0 && products.data.length === 0) && (
                     <p className="mt-16 text-center text-stone-500">Aucun produit dans cette catégorie.</p>
                 )}
             </section>

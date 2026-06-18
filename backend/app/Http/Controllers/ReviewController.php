@@ -74,4 +74,25 @@ class ReviewController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Display all customer reviews in admin panel
+     */
+    public function index(Request $request)
+    {
+        $reviews = Review::with('product', 'order')
+            ->when($request->string('status'), function ($q, $status) {
+                $q->where('status', $status);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(50);
+
+        return \Inertia\Inertia::render('Reviews/Index', [
+            'reviews' => $reviews,
+            'filters' => [
+                'status' => $request->string('status')->toString(),
+            ],
+        ]);
+    }
 }
+

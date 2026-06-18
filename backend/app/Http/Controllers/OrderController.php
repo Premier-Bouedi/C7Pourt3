@@ -104,4 +104,58 @@ class OrderController extends Controller
             'whatsappSatisfaction' => $this->whatsApp->general(),
         ]);
     }
+
+    /**
+     * Display all orders in admin panel
+     */
+    public function index(): Response
+    {
+        $orders = Order::with('items', 'payments')
+            ->orderByDesc('created_at')
+            ->paginate(50);
+
+        return Inertia::render('Orders/Index', [
+            'orders' => $orders,
+        ]);
+    }
+
+    /**
+     * Display order details in admin panel
+     */
+    public function show(string $id): Response
+    {
+        $order = Order::with('items', 'payments')->findOrFail($id);
+
+        return Inertia::render('Orders/Show', [
+            'order' => $order,
+        ]);
+    }
+
+    /**
+     * Handle webhook from showcase site for new validated orders
+     */
+    public function webhook(Request $request): JsonResponse
+    {
+        // Validate webhook signature (if needed)
+        $validated = $request->validate([
+            'items' => 'required|array',
+            'customer' => 'required|array',
+        ]);
+
+        // Create order from webhook data
+        $order = $this->orders->createFromCart(
+            $validated['items'],
+            $validated['customer'],
+        );
+
+        // Send confirmation
+        $this->whatsApp->orderConfirmed($order);
+
+        return response()->json([
+            'success' => true,
+            'order_id' => $order->id,
+            'reference' => $order->reference,
+        ], 201);
+    }
 }
+
