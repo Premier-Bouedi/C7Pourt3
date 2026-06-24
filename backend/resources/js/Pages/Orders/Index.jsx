@@ -83,7 +83,7 @@ export default function OrdersIndex({ orders }) {
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <Link
-                        href={route('orders.show', order.id)}
+                        href={`/admin/orders/${order.id}`}
                         className="text-blue-900 hover:underline font-medium"
                       >
                         Voir →

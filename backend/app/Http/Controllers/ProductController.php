@@ -101,7 +101,7 @@ class ProductController extends Controller
 
         Product::create($validated);
 
-        return redirect()->route('products.manage')->with('success', 'Produit créé avec succès');
+        return redirect()->route('admin.products.manage')->with('success', 'Produit créé avec succès');
     }
 
     /**
@@ -132,7 +132,7 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('products.manage')->with('success', 'Produit mis à jour avec succès');
+        return redirect()->route('admin.products.manage')->with('success', 'Produit mis à jour avec succès');
     }
 
     /**
@@ -142,7 +142,7 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return redirect()->route('products.manage')->with('success', 'Produit supprimé avec succès');
+        return redirect()->route('admin.products.manage')->with('success', 'Produit supprimé avec succès');
     }
 
     private function fmt(Product $p, bool $d = false): array
@@ -151,6 +151,7 @@ class ProductController extends Controller
             'id' => $p->id, 'name' => $p->name, 'slug' => $p->slug,
             'base_price' => $p->displayPrice(),
             'compare_at_price' => (int) ($p->compare_at_price ?? 0),
+            'currency' => 'MAD',
             'images' => $p->images ?? [],
             'category' => $p->category, 'average_rating' => (float) $p->average_rating,
             'reviews_count' => $p->reviews_count,

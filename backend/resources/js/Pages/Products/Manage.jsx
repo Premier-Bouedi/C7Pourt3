@@ -22,7 +22,7 @@ export default function ProductsManage({ products }) {
             <p className="mt-1 text-sm text-stone-600">Gestion complète CRUD des produits luxe</p>
           </div>
           <Link
-            href={route('products.create')}
+            href="/admin/products/create"
             className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-950 font-medium"
           >
             + Nouveau Produit
@@ -35,6 +35,7 @@ export default function ProductsManage({ products }) {
             <table className="w-full">
               <thead className="bg-stone-50 border-b border-stone-200">
                 <tr>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-stone-900">Image</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-stone-900">Nom</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-stone-900">Catégorie</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-stone-900">Prix</th>
@@ -45,6 +46,19 @@ export default function ProductsManage({ products }) {
               <tbody className="divide-y divide-stone-200">
                 {products.map((product) => (
                   <tr key={product.id} className="hover:bg-stone-50 transition-colors">
+                    <td className="px-6 py-4">
+                      {product.images && product.images.length > 0 ? (
+                        <img 
+                          src={product.images[0]} 
+                          alt={product.name} 
+                          className="w-12 h-12 rounded-lg object-cover bg-stone-100"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-stone-200 flex items-center justify-center text-stone-400">
+                          <span className="text-xs">Aucune</span>
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm font-medium text-stone-900">
                       {product.name}
                     </td>
@@ -63,7 +77,7 @@ export default function ProductsManage({ products }) {
                     </td>
                     <td className="px-6 py-4 text-sm space-x-3">
                       <Link
-                        href={route('products.edit', product.id)}
+                        href={`/admin/products/${product.slug}/edit`}
                         className="text-blue-900 hover:underline font-medium"
                       >
                         Modifier

@@ -16,7 +16,7 @@ export default function ProductsEdit({ product }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    put(route('products.update', product.id));
+    put(`/admin/products/${product.slug}`);
   };
 
   return (

@@ -30,12 +30,14 @@ class DashboardController extends Controller
             ->where('updated_at', '>=', now()->subHours(48))
             ->count();
 
-        return Inertia::render('Dashboard', [
+        // Return dashboard data
+        $dashboardData = [
             'stats' => [
                 'total_orders' => $totalOrders,
                 'pending_orders' => $pendingOrders,
                 'total_revenue' => $totalRevenue,
                 'active_products' => $activeProducts,
+                'currency' => 'MAD',
             ],
             'stock' => [
                 'casablanca' => $casablancaStock,
@@ -44,6 +46,26 @@ class DashboardController extends Controller
             'alerts' => [
                 'transit_48h' => $transitAlerts,
             ],
-        ]);
+        ];
+        return Inertia::render('Dashboard', $dashboardData);
+    }
+
+    /**
+     * Display stock overview page.
+     */
+    public function stock(): Response
+    {
+        // Stock status by location
+        $casablancaStock = Product::where('is_active', true)->sum('stock_casablanca') ?? 0;
+        $librevilleStock = Product::where('is_active', true)->sum('stock_libreville') ?? 0;
+
+        // Reuse the same stock data as dashboard
+        $stockData = [
+            'stock' => [
+                'casablanca' => $casablancaStock,
+                'libreville' => $librevilleStock,
+            ],
+        ];
+        return Inertia::render('Admin/Stock', $stockData);
     }
 }

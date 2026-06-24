@@ -23,6 +23,7 @@ class OrderController extends Controller
     {
         return Inertia::render('Checkout', [
             'shippingFee' => (int) config('c7pourt3.shipping_fee', 5000),
+            'currency' => 'MAD',
             'whatsappCheckout' => $this->whatsApp->checkoutHelp(),
         ]);
     }
@@ -38,6 +39,7 @@ class OrderController extends Controller
             'order' => [
                 'reference' => $order->reference,
                 'total' => $order->total,
+                'currency' => 'MAD',
                 'whatsapp_url' => $this->whatsApp->orderConfirmed($order),
             ],
             'redirect' => route('commande.confirmation', $order->reference),
@@ -53,6 +55,7 @@ class OrderController extends Controller
                 'reference' => $order->reference,
                 'customer_name' => $order->customer_name,
                 'total' => $order->total,
+                'currency' => 'MAD',
                 'status' => $order->status->label(),
                 'items' => $order->items,
             ],
@@ -81,6 +84,7 @@ class OrderController extends Controller
                 'status' => $order->status->value,
                 'status_label' => $order->status->label(),
                 'total' => $order->total,
+                'currency' => 'MAD',
                 'customer_name' => $order->customer_name,
                 'estimated_delivery_at' => $order->estimated_delivery_at?->format('d/m/Y'),
                 'items' => $order->items,

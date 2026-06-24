@@ -33,6 +33,7 @@ class PaymentController extends Controller
                 'pending_amount' => $pendingAmount,
                 'completed_amount' => $completedAmount,
                 'failed_amount' => $failedAmount,
+                'currency' => 'MAD',
             ],
         ]);
     }

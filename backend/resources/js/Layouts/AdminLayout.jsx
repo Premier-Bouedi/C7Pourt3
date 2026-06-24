@@ -3,18 +3,18 @@ import { Link, usePage } from '@inertiajs/react';
 
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { auth } = usePage().props;
-  const currentPath = route().current();
-
-  const isActive = (routeName) => currentPath === routeName;
+  const { auth, stats, stock } = usePage().props ?? {};
+  // Use the browser's pathname for active link detection
+  const isActive = (path) => window.location.pathname === path;
+  const totalStock = (stock?.casablanca ?? 0) + (stock?.libreville ?? 0);
 
   const menuItems = [
-    { icon: '📊', label: 'Tableau de Bord', route: 'dashboard', key: 'dashboard' },
-    { icon: '📦', label: 'Commandes', route: 'orders.index', key: 'orders.index' },
-    { icon: '💳', label: 'Paiements', route: 'payments.cod.index', key: 'payments.cod.index' },
-    { icon: '🛍️', label: 'Produits', route: 'products.manage', key: 'products.manage' },
-    { icon: '📨', label: 'Newsletter', route: 'newsletter.index', key: 'newsletter.index' },
-    { icon: '⭐', label: 'Avis Clients', route: 'reviews.index', key: 'reviews.index' },
+    { icon: '📊', label: 'Tableau de Bord', href: '/admin/dashboard', key: 'dashboard' },
+    { icon: '📦', label: 'Commandes', href: '/admin/orders', key: 'orders.index' },
+    { icon: '💳', label: 'Paiements', href: '/admin/cod-payments', key: 'payments.cod.index' },
+    { icon: '🛍️', label: 'Produits', href: '/admin/products', key: 'products.manage', badge: stats?.active_products },
+    { icon: '📦', label: 'Stock', href: '/admin/stock', key: 'stock.index', badge: totalStock },
+    { icon: '⭐', label: 'Avis Clients', href: '/admin/reviews', key: 'reviews.index' },
   ];
 
   return (
@@ -28,7 +28,7 @@ export default function AdminLayout({ children }) {
         {/* Logo */}
         <div className="flex items-center justify-between p-4 border-b border-blue-800">
           {sidebarOpen && (
-            <Link href="/" className="text-2xl font-bold text-white hover:opacity-80 transition-opacity">
+  <Link href="/admin/dashboard" className="text-2xl font-bold text-white hover:opacity-80 transition-opacity">
               C7Pourt3
             </Link>
           )}
@@ -46,15 +46,18 @@ export default function AdminLayout({ children }) {
           {menuItems.map((item) => (
             <Link
               key={item.key}
-              href={route(item.route)}
+              href={item.href}
               className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                isActive(item.key)
+                isActive(item.href)
                   ? 'bg-white/20 text-white font-semibold'
                   : 'text-blue-100 hover:bg-white/10'
               }`}
             >
               <span className="text-lg">{item.icon}</span>
-              {sidebarOpen && <span>{item.label}</span>}
+                {sidebarOpen && item.badge !== undefined && (
+                  <span className="ml-2 text-sm text-gray-300">({item.badge})</span>
+                )}
+                {sidebarOpen && <span>{item.label}</span>}
             </Link>
           ))}
         </nav>
@@ -63,17 +66,19 @@ export default function AdminLayout({ children }) {
         <div className="absolute bottom-0 left-0 right-0 border-t border-blue-800 p-4">
           <div className={`flex items-center ${sidebarOpen ? 'space-x-3' : 'justify-center'}`}>
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold">
-              {auth.user.name.charAt(0)}
+              {auth?.user?.name?.charAt(0)}
             </div>
             {sidebarOpen && (
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-white truncate">{auth.user.name}</p>
-                <p className="text-xs text-blue-200">{auth.user.role}</p>
-              </div>
+              auth?.user?.name ? (
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-white truncate">{auth.user.name}</p>
+                  <p className="text-xs text-blue-200">{auth.user.role}</p>
+                </div>
+              ) : null
             )}
           </div>
           {sidebarOpen && (
-            <form method="POST" action={route('logout')} className="mt-3">
+            <form method="POST" action="/logout" className="mt-3">
               <button
                 type="submit"
                 className="w-full text-sm text-left px-2 py-2 text-blue-100 hover:text-white transition-colors"
