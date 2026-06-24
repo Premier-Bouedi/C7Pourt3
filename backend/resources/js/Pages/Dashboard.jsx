@@ -110,19 +110,19 @@ export default function Dashboard({ stats, stock, alerts }) {
           <h3 className="text-2xl font-bold mb-6">Actions Rapides</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
-              href="/orders"
+              href="/admin/orders"
               className="bg-white/10 hover:bg-white/20 rounded-xl p-4 transition-colors text-center font-medium"
             >
               → Gérer les Commandes
             </Link>
             <Link
-              href="/products"
+              href="/admin/products"
               className="bg-white/10 hover:bg-white/20 rounded-xl p-4 transition-colors text-center font-medium"
             >
               → Catalogue Produits
             </Link>
             <Link
-              href="/payments-cod"
+              href="/admin/cod-payments"
               className="bg-white/10 hover:bg-white/20 rounded-xl p-4 transition-colors text-center font-medium"
             >
               → Valider Paiements
