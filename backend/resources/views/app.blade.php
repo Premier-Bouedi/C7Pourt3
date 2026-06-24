@@ -12,8 +12,16 @@
 <body class="font-sans antialiased bg-stone-50 text-stone-900">
     @inertia
 
-    <!-- Widget Assistant IA PFE (Bulle circulaire en bas à gauche) -->
-    <div id="ai-bot-wrapper" class="fixed bottom-6 left-6 z-[9999] flex flex-col items-start">
+    @php
+        $isAdmin = request()->is('admin*');
+        $positionClass = $isAdmin ? 'right-6 items-end' : 'left-6 items-start';
+        $greeting = $isAdmin 
+            ? 'Bonjour ! Je suis prêt à analyser les commandes et le stock.' 
+            : 'Bonjour et bienvenue chez C7PourT3 ! Je suis votre conseiller personnel en maroquinerie de luxe. Que recherchez-vous aujourd\'hui ?';
+    @endphp
+
+    <!-- Widget Assistant IA PFE (Bulle circulaire) -->
+    <div id="ai-bot-wrapper" class="fixed bottom-6 {{ $positionClass }} z-[9999] flex flex-col">
         <!-- Conteneur de Chat (Masqué par défaut) -->
         <div id="ai-chat-window" class="hidden mb-4 w-80 bg-stone-900 text-white rounded-2xl shadow-2xl border border-orange-500/30 overflow-hidden flex flex-col" style="height: 400px;">
             <div class="bg-stone-950 px-4 py-3 border-b border-orange-500/30 flex justify-between items-center">
@@ -22,7 +30,7 @@
             </div>
             <div id="ai-chat-container" class="flex-1 p-4 overflow-y-auto text-sm space-y-3 bg-stone-900">
                 <div class="text-left">
-                    <span class="bg-stone-800 text-stone-200 px-3 py-2 rounded-lg inline-block">Bonjour ! Je suis prêt à analyser les commandes et le stock de Casablanca.</span>
+                    <span class="bg-stone-800 text-stone-200 px-3 py-2 rounded-lg inline-block">{{ $greeting }}</span>
                 </div>
             </div>
             <div class="p-3 bg-stone-950 border-t border-stone-800">
