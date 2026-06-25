@@ -15,8 +15,14 @@ use Inertia\Inertia;
 // PUBLIC ROUTES - Site Vitrine C7Pourt3 (Client-facing)
 // ============================================================================
 
-// Homepage redirect
-Route::get('/', fn () => redirect()->route('collection'));
+// Homepage status (to prevent blank page / Vercel Toolbar issues)
+Route::get('/', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'C7PourT3 Backend API en ligne sur Vercel',
+        'framework' => 'Laravel'
+    ]);
+});
 
 // Product collection & catalog
 Route::get('/collection', [ProductController::class, 'collection'])->name('collection');
