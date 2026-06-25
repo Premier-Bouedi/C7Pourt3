@@ -1,6 +1,3 @@
 <?php
-// Point d'entrée Vercel
-// Root Directory = backend/ => __DIR__ = backend/api/
-// Donc '../public/index.php' pointe bien vers backend/public/index.php
+// Liaison correcte puisque 'api' et 'public' sont des dossiers frères sous la racine 'backend'
 require __DIR__ . '/../public/index.php';
-
