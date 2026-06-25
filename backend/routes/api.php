@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AgencyController;
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\NewsletterController;
@@ -62,6 +63,12 @@ Route::post('/orders/webhook', [OrderController::class, 'webhook']);
 
 Route::get('/orders/reviewable', [ReviewController::class, 'reviewableOrder']);
 Route::post('/reviews', [ReviewController::class, 'store']);
+
+// ============================================================================
+// AGENCY ROUTES - Application Mobile Flutter (Agence / Stock Libreville)
+// ============================================================================
+
+Route::get('/agency/dashboard', [AgencyController::class, 'dashboard']);
 
 // ============================================================================
 // DRIVER ROUTES - Application Mobile Flutter (Livreurs Casablanca)
