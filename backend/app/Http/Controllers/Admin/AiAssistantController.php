@@ -23,12 +23,12 @@ class AiAssistantController extends Controller
         $userMessage = $request->input('message');
 
         // 1. Collecter le contexte (Données réelles)
-        
+
         // Commandes urgentes (en attente, < 48h)
         $urgentOrders = Order::where('status', 'pending')
             ->where('created_at', '>=', now()->subHours(48))
             ->get();
-            
+
         $urgentCount = $urgentOrders->count();
         $urgentText = "Commandes urgentes (< 48h) à Casablanca : {$urgentCount}\n";
         foreach ($urgentOrders as $order) {
@@ -38,7 +38,7 @@ class AiAssistantController extends Controller
 
         // Produits
         $products = Product::all();
-        $productsText = $products->map(function($product) {
+        $productsText = $products->map(function ($product) {
             return "- {$product->name}: Prix {$product->price} XAF, Origine: {$product->origin}, Stock: {$product->stock_quantity}";
         })->implode("\n");
         $stockText = "État des stocks (Sacs haut de gamme) :\n" . $productsText . "\n";
@@ -69,7 +69,8 @@ class AiAssistantController extends Controller
         }
 
         // 2. Appel à l'API IA (Simulation ou vraie API)
-        $apiKey = config('services.gemini.api_key');
+
+        $apiKey = "AIzaSyAXBtsUQiSIz-rnrp6IYiEeUXO0MemYQMM";
 
         if ($apiKey) {
             try {
