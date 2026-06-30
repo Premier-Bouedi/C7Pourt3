@@ -101,27 +101,9 @@ class AiAssistantController extends Controller
             }
         }
 
-        // Fallback en cas d'absence de clé API ou d'erreur
-        $reply = $this->simulateResponse($userMessage, $urgentCount);
-
+        // Message de secours si la clé est absente (comme demandé)
         return response()->json([
-            'reply' => $reply
+            'reply' => "Configuration de l'IA en cours..."
         ]);
-    }
-
-    private function simulateResponse($message, $urgentCount)
-    {
-        $message = strtolower($message);
-        
-        if (str_contains($message, 'commande') || str_contains($message, 'urgent')) {
-            return "Il y a actuellement {$urgentCount} commande(s) urgente(s) en attente pour Casablanca (délai < 48h).";
-        }
-
-        if (str_contains($message, 'stock')) {
-            return "Les stocks sont à jour. Consultez l'onglet Stocks pour voir les détails de vos sacs haut de gamme.";
-        }
-
-        return "Ceci est une réponse simulée (API non configurée). J'ai bien reçu votre message : '{$message}'. "
-            . "N'hésitez pas à me demander l'état des commandes urgentes ou des stocks.";
     }
 }
