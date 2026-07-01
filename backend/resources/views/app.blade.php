@@ -53,6 +53,25 @@
     <!-- Logique JS du Bot IA (Top Navbar / Bulle Ronde) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Formatteur Markdown simple côté client
+            function formatMarkdown(text) {
+                if (!text) return "";
+                let html = text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+                
+                // Formater le gras (**texte**)
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Formater l'italique (*texte*)
+                html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                // Formater les listes à puces
+                html = html.replace(/^\s*[-*•]\s+(.+)/gm, '• $1');
+                // Retours à la ligne
+                html = html.replace(/\n/g, '<br>');
+                return html;
+            }
+
             // Toggle de la fenêtre de chat
             const toggleBtn = document.getElementById('toggle-ai-chat');
             const closeBtn = document.getElementById('close-ai-chat');
@@ -68,6 +87,19 @@
                     chatWindow.classList.add('hidden');
                 });
             }
+
+            // Intercepter la touche "Entrée" dans le champ de texte
+            document.body.addEventListener('keydown', function (e) {
+                const inputField = e.target.closest('.ai-chat-input, #ai-chat-input');
+                if (inputField && e.key === 'Enter') {
+                    e.preventDefault();
+                    const botWrapper = inputField.closest('.ai-bot-wrapper, #ai-bot-wrapper') || document;
+                    const sendBtn = botWrapper.querySelector('.ai-send-btn, #ai-send-btn, [data-ai-action="send"], .btn-envoyer-ia');
+                    if (sendBtn) {
+                        sendBtn.click();
+                    }
+                }
+            });
 
             // Utilisation de la délégation d'événements pour intercepter les interactions du Bot IA
             // Cela permet de supporter les éléments générés dynamiquement (React/Inertia/Filament)
@@ -119,7 +151,7 @@
                             const loader = chatContainer.querySelector('.ai-loader');
                             if (loader) loader.remove();
                             
-                            const aiReplyHtml = `<div class="text-left my-2"><span class="bg-stone-200 text-stone-800 px-3 py-2 rounded-lg inline-block text-sm">${data.reply.replace(/\n/g, '<br>')}</span></div>`;
+                            const aiReplyHtml = `<div class="text-left my-2"><span class="bg-stone-200 text-stone-800 px-3 py-2 rounded-lg inline-block text-sm">${formatMarkdown(data.reply)}</span></div>`;
                             chatContainer.insertAdjacentHTML('beforeend', aiReplyHtml);
                             chatContainer.scrollTop = chatContainer.scrollHeight;
                         }
